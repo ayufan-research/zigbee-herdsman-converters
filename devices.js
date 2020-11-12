@@ -435,7 +435,11 @@ const devices = [
             fz.xiaomi_power],
         exposes: [e.switch().withEndpoint('left'), e.switch().withEndpoint('right'), e.temperature(), e.power(), e.action([
             'single_left', 'single_right', 'single_both', 'double_left', 'double_right', 'double_both',
-            'hold_left', 'hold_right', 'hold_both', 'release_left', 'release_right', 'release_both'])],
+            'hold_left', 'hold_right', 'hold_both', 'release_left', 'release_right', 'release_both',
+            ]),
+            exposes.enum("operation_mode", exposes.access.ALL, ["control_left_relay", "control_right_relay", "decoupled"]).withEndpoint('left'),
+            exposes.enum("operation_mode", exposes.access.ALL, ["control_left_relay", "control_right_relay", "decoupled"]).withEndpoint('right'),
+        ],
         meta: {multiEndpoint: true},
         toZigbee: [tz.on_off, tz.xiaomi_switch_operation_mode, tz.xiaomi_power],
         endpoint: (device) => {

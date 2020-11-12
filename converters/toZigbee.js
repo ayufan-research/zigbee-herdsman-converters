@@ -1428,14 +1428,18 @@ const converters = {
             if (['QBKG11LM', 'QBKG04LM', 'QBKG03LM', 'QBKG12LM', 'QBKG21LM', 'QBKG22LM', 'QBKG24LM'].includes(meta.mapped.model)) {
                 const lookupAttrId = {single: 0xFF22, left: 0xFF22, right: 0xFF23};
                 const lookupState = {control_relay: 0x12, control_left_relay: 0x12, control_right_relay: 0x22, decoupled: 0xFE};
-                const button = value.hasOwnProperty('button') ? value.button : 'single';
+                const button = meta.endpoint_name ? meta.endpoint_name :
+                    (value.hasOwnProperty('button') ? value.button : 'single');
                 const payload = {};
-                payload[lookupAttrId[button]] = {value: lookupState[value.state], type: 0x20};
-                await entity.write('genBasic', payload, manufacturerOptions.xiaomi);
-                return {state: {[`operation_mode${button !== 'single' ? `_${button}` : ''}`]: value.state}};
+                const state = meta.endpoint_name ? value : value.state;
+                payload[lookupAttrId[button]] = {value: lookupState[state], type: 0x20};
+                const endpoint = meta.device.getEndpoint(1);
+                await endpoint.write('genBasic', payload, manufacturerOptions.xiaomi);
+                return {state: {[`operation_mode${button !== 'single' ? `_${button}` : ''}`]: state}};
             } else if (meta.mapped.model === 'QBKG25LM') {
                 const lookupState = {control_relay: 0x01, decoupled: 0x00};
-                await entity.write('aqaraOpple', {0x0200: {value: lookupState[value.state], type: 0x20}}, manufacturerOptions.xiaomi);
+                const state = meta.endpoint_name ? value : value.state;
+                await entity.write('aqaraOpple', {0x0200: {value: lookupState[state], type: 0x20}}, manufacturerOptions.xiaomi);
                 return {state: {operation_mode: value.state}};
             } else {
                 throw new Error('Not supported');
@@ -1444,8 +1448,10 @@ const converters = {
         convertGet: async (entity, key, meta) => {
             if (['QBKG11LM', 'QBKG04LM', 'QBKG03LM', 'QBKG12LM', 'QBKG21LM', 'QBKG22LM', 'QBKG24LM'].includes(meta.mapped.model)) {
                 const lookupAttrId = {single: 0xFF22, left: 0xFF22, right: 0xFF23};
-                const button = meta.message[key].hasOwnProperty('button') ? meta.message[key].button : 'single';
-                await entity.read('genBasic', [lookupAttrId[button]], manufacturerOptions.xiaomi);
+                const button = meta.endpoint_name ? meta.endpoint_name :
+                    (meta.message[key].hasOwnProperty('button') ? meta.message[key].button : 'single');
+                const endpoint = meta.device.getEndpoint(1);
+                await endpoint.read('genBasic', [lookupAttrId[button]], manufacturerOptions.xiaomi);
             } else if (meta.mapped.model === 'QBKG25LM') {
                 await entity.read('aqaraOpple', 0x0200, manufacturerOptions.xiaomi);
             } else {
