@@ -1373,13 +1373,42 @@ const devices = [
             tz.tuya_thermostat_calibration, tz.tuya_thermostat_min_temp, tz.tuya_thermostat_max_temp,
             tz.tuya_thermostat_boost_time, tz.tuya_thermostat_comfort_temp, tz.tuya_thermostat_eco_temp,
             tz.tuya_thermostat_force_to_mode, tz.tuya_thermostat_preset, tz.tuya_thermostat_away_mode,
-            tz.tuya_thermostat_window_detect, tz.tuya_thermostat_schedule, tz.tuya_thermostat_week, tz.tuya_thermostat_away_preset],
+            tz.tuya_thermostat_window_detect, tz.tuya_thermostat_schedule, tz.tuya_thermostat_week, tz.tuya_thermostat_away_preset,
+            tz.tuya_thermostat_schedule_workdays_holidays,
+        ],
         exposes: [
             e.child_lock(), e.window_detection(), e.battery(), e.battery_low(), e.valve_detection(), e.position(),
             exposes.climate().withSetpoint('current_heating_setpoint', 5, 35, 0.5, exposes.access.STATE_SET)
                 .withLocalTemperature(exposes.access.STATE).withSystemMode(['heat', 'auto', 'off'], exposes.access.STATE_SET)
                 .withRunningState(['idle', 'heat'], exposes.access.STATE)
-                .withAwayMode().withPreset(['schedule', 'manual', 'boost', 'complex', 'comfort', 'eco'])],
+                .withAwayMode().withPreset(['schedule', 'manual', 'boost', 'complex', 'comfort', 'eco']),
+            exposes.enum('week', exposes.access.STATE_SET, ['5+2', '6+1', '7']),
+            exposes.text('holidays_text', exposes.access.STATE_SET),
+            exposes.text('workdays_text', exposes.access.STATE_SET),
+            exposes.enum('auto_lock', exposes.access.STATE_SET, ['AUTO', 'MANUAL']),
+            exposes.enum('force', exposes.access.STATE_SET, ['normal', 'open', 'close']),
+            exposes.binary('away_mode', exposes.access.STATE_SET, 'ON', 'OFF'),
+            exposes.numeric('local_temperature_calibration', exposes.access.STATE_SET)
+                .withValueMin(-8).withValueMax(8).withValueStep(0.5)
+                .withUnit('°C').withDescription('Temperature calibration'),
+            exposes.numeric('min_temperature', exposes.access.STATE_SET)
+                .withValueMin(5).withValueMax(32).withValueStep(0.5)
+                .withUnit('°C').withDescription('Minumum temperature'),
+            exposes.numeric('max_temperature', exposes.access.STATE_SET)
+                .withValueMin(5).withValueMax(32).withValueStep(0.5)
+                .withUnit('°C').withDescription('Maximum temperature'),
+            exposes.numeric('boost_time', exposes.access.STATE_SET),
+            exposes.numeric('comfort_temperature', exposes.access.STATE_SET)
+                .withValueMin(5).withValueMax(32).withValueStep(0.5)
+                .withUnit('°C').withDescription('Comfort preset temperature'),
+            exposes.numeric('eco_temperature', exposes.access.STATE_SET)
+                .withValueMin(5).withValueMax(32).withValueStep(0.5)
+                .withUnit('°C').withDescription('Eco preset temperature'),
+            exposes.numeric('away_preset_temperature', exposes.access.STATE_SET)
+                .withValueMin(5).withValueMax(32).withValueStep(0.5)
+                .withUnit('°C').withDescription('Away preset temperature'),
+            exposes.numeric('away_preset_days', exposes.access.SET),
+        ],
     },
     {
         fingerprint: [{modelID: 'v90ladg\u0000', manufacturerName: '_TYST11_wv90ladg'}],

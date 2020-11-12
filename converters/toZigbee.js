@@ -3194,6 +3194,29 @@ const converters = {
             }
         },
     },
+    tuya_thermostat_schedule_workdays_holidays: { // payload example {"holidays":[{"hour":6,"minute":0,"temperature":20},{"hour":8,"minute":0,....  6x
+        key: ['workdays_text', 'holidays_text'],
+        convertSet: async (entity, key, value, meta) => {
+            const dpId =
+                (key === 'workdays_text') ?
+                    tuya.dataPoints.scheduleWorkday :
+                    tuya.dataPoints.scheduleHoliday;
+            const payload = [];
+            value = JSON.parse(value);
+            for (let i = 0; i < 6; i++) {
+                if ((value[i].hour >= 0) && (value[i].hour < 24)) {
+                    payload[i*3] = value[i].hour;
+                }
+                if ((value[i].minute >= 0) && (value[i].minute < 60)) {
+                    payload[i*3+1] = value[i].minute;
+                }
+                if ((value[i].temperature >= 5) && (value[i].temperature < 35)) {
+                    payload[i*3+2] = value[i].temperature;
+                }
+            }
+            tuya.sendDataPointRaw(entity, dpId, payload);
+        },
+    },
     tuya_thermostat_week: {
         key: ['week'],
         convertSet: async (entity, key, value, meta) => {

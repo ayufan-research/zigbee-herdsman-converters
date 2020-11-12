@@ -2731,27 +2731,29 @@ const converters = {
                 // Top bits in hours have special meaning
                 // 8: ??
                 // 7: Current schedule indicator
-                return {workdays: [
+                const workdays = [
                     {hour: value[0] & 0x3F, minute: value[1], temperature: value[2]},
                     {hour: value[3] & 0x3F, minute: value[4], temperature: value[5]},
                     {hour: value[6] & 0x3F, minute: value[7], temperature: value[8]},
                     {hour: value[9] & 0x3F, minute: value[10], temperature: value[11]},
                     {hour: value[12] & 0x3F, minute: value[13], temperature: value[14]},
                     {hour: value[15] & 0x3F, minute: value[16], temperature: value[17]},
-                ]};
+                ];
+                return {workdays: workdays, workdays_text: JSON.stringify(workdays)};
             case tuya.dataPoints.scheduleHoliday: // set schedule for holidays [6,0,20,8,0,15,11,30,15,12,30,15,17,30,20,22,0,15]
                 // 6:00 - 20*, 8:00 - 15*, 11:30 - 15*, 12:30 - 15*, 17:30 - 20*, 22:00 - 15*
                 // Top bits in hours have special meaning
                 // 8: ??
                 // 7: Current schedule indicator
-                return {holidays: [
+                const holidays = [
                     {hour: value[0] & 0x3F, minute: value[1], temperature: value[2]},
                     {hour: value[3] & 0x3F, minute: value[4], temperature: value[5]},
                     {hour: value[6] & 0x3F, minute: value[7], temperature: value[8]},
                     {hour: value[9] & 0x3F, minute: value[10], temperature: value[11]},
                     {hour: value[12] & 0x3F, minute: value[13], temperature: value[14]},
                     {hour: value[15] & 0x3F, minute: value[16], temperature: value[17]},
-                ]};
+                ];
+                return {holidays: holidays, holidays_text: JSON.stringify(holidays)};
             case tuya.dataPoints.childLock:
                 return {child_lock: value ? 'LOCKED' : 'UNLOCKED'};
             case tuya.dataPoints.siterwellWindowDetection:
